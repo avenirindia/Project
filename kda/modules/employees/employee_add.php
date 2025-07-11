@@ -12,9 +12,6 @@ $employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
 // Random Branch Code
 $branch_code = rand(100000, 999999);
 
-// Designation List from database
-$stmt = $pdo->query("SELECT * FROM designations WHERE status=1 ORDER BY title ASC");
-$designations = $stmt->fetchAll();
 ?>
 <div class="col-md-6">
   <label>Designation</label>
