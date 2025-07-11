@@ -1,6 +1,5 @@
 <?php
 include '../../config/db_connect.php';
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -12,7 +11,21 @@ $employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
 
 // Random Branch Code
 $branch_code = rand(100000, 999999);
+
+// Designation List from database
+$stmt = $pdo->query("SELECT * FROM designations WHERE status=1 ORDER BY title ASC");
+$designations = $stmt->fetchAll();
 ?>
+<div class="col-md-6">
+  <label>Designation</label>
+  <select name="designation" class="form-select" required>
+    <option value="">-- Select Designation --</option>
+    <?php foreach($designations as $d): ?>
+      <option value="<?php echo $d['title']; ?>"><?php echo $d['title']; ?></option>
+    <?php endforeach ?>
+  </select>
+</div>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,7 +82,6 @@ $branch_code = rand(100000, 999999);
     <textarea name="permanent_address" class="form-control" rows="2"></textarea>
   </div>
 </div>
-
 <div class="row mb-3">
   <div class="col-md-6">
     <label>Qualification</label>
@@ -80,12 +92,11 @@ $branch_code = rand(100000, 999999);
     <select name="designation" class="form-select" required>
       <option value="">-- Select Designation --</option>
       <?php foreach($designations as $d): ?>
-        <option value="<?php echo $d; ?>"><?php echo $d; ?></option>
+        <option value="<?php echo $d['title']; ?>"><?php echo $d['title']; ?></option>
       <?php endforeach ?>
     </select>
   </div>
 </div>
-
 <div class="mb-3">
   <label>Joining Date</label>
   <input type="date" name="joining_date" class="form-control">
