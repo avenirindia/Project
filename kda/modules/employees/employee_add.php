@@ -13,7 +13,6 @@ $employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
 $branch_code = rand(100000, 999999);
 ?>
 
-?>
 </div>
 
 <!DOCTYPE html>
