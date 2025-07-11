@@ -109,20 +109,20 @@ $branch_code = rand(100000, 999999);
 </div>
 <div class="row mb-3">
   <div class="col-md-3">
-    <label>Upload Passport Photo</label>
-    <input type="file" name="photo" class="form-control">
+    <label>Bank Pass Book</label>
+    <input type="file" name="bank_pass_book" class="form-control">
   </div>
   <div class="col-md-3">
-    <label>Upload Aadhaar Card</label>
-    <input type="file" name="aadhaar_doc" class="form-control">
+    <label>Voter Card</label>
+    <input type="file" name="voter_card" class="form-control">
   </div>
   <div class="col-md-3">
-    <label>Upload PAN Card</label>
-    <input type="file" name="pan_doc" class="form-control">
+    <label>Application Form</label>
+    <input type="file" name="application_form" class="form-control">
   </div>
   <div class="col-md-3">
-    <label>Upload Qualification Certificate</label>
-    <input type="file" name="qualification_doc" class="form-control">
+    <label>Confirmation Letter</label>
+    <input type="file" name="confirmation_letter" class="form-control">
   </div>
 </div>
 <div class="mb-3">
