@@ -82,21 +82,24 @@ $designations = $stmt->fetchAll();
     <textarea name="permanent_address" class="form-control" rows="2"></textarea>
   </div>
 </div>
+
 <div class="row mb-3">
   <div class="col-md-6">
     <label>Qualification</label>
     <input type="text" name="qualification" class="form-control">
   </div>
   <div class="col-md-6">
+    
     <label>Designation</label>
     <select name="designation" class="form-select" required>
       <option value="">-- Select Designation --</option>
       <?php foreach($designations as $d): ?>
-        <option value="<?php echo $d['title']; ?>"><?php echo $d['title']; ?></option>
+        <option value="<?php echo $d; ?>"><?php echo $d; ?></option>
       <?php endforeach ?>
     </select>
   </div>
 </div>
+
 <div class="mb-3">
   <label>Joining Date</label>
   <input type="date" name="joining_date" class="form-control">
