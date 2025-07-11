@@ -1,5 +1,6 @@
 <?php
 include '../../config/db_connect.php';
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -10,7 +11,7 @@ $next_id = $row['last_id'] + 1;
 $employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
 
 // Random Branch Code
-$branch_code = rand(100000, 999999);
+$branch_code = rand(BR100000, 999999);
 ?>
 <!DOCTYPE html>
 <html>
