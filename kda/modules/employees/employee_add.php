@@ -129,10 +129,6 @@ $branch_code = rand(100000, 999999);
     <input type="file" name="confirmation_letter" class="form-control">
   </div>
 </div>
-<div class="mb-3">
-  <label><strong>Net Salary (Auto Calculated)</strong></label>
-  <input type="number" name="net_salary" step="0.01" class="form-control" readonly>
-</div>
 
 <div class="d-flex gap-2">
   <button type="submit" class="btn btn-primary">➕ Submit Employee</button>
