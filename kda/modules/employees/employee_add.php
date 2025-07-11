@@ -11,16 +11,9 @@ $employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
 
 // Random Branch Code
 $branch_code = rand(100000, 999999);
+?>
 
 ?>
-<div class="col-md-6">
-  <label>Designation</label>
-  <select name="designation" class="form-select" required>
-    <option value="">-- Select Designation --</option>
-    <?php foreach($designations as $d): ?>
-      <option value="<?php echo $d['title']; ?>"><?php echo $d['title']; ?></option>
-    <?php endforeach ?>
-  </select>
 </div>
 
 <!DOCTYPE html>
