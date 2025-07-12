@@ -1,4 +1,13 @@
 <?php
+$company_result = mysqli_query($conn, "SELECT * FROM company_info LIMIT 1");
+$company = mysqli_fetch_assoc($company_result);
+?>
+<div style="background-color: #f8f9fa; padding: 6px 20px; font-size: 14px; color: #333;">
+    📧 Email: <?php echo $company['care@kdafinance.in']; ?> |
+    📞 Contact: <?php echo $company['phone0']; ?> |
+    🌐 Website: <?php echo $company['https://www.kdafinance.in']; ?>
+</div>
+<?php
 session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
@@ -57,7 +66,18 @@ $notifications = 7;
         }
     </style>
 </head>
-<body>
+<body><?php
+// Notification fetch
+$notice_result = mysqli_query($conn, "SELECT * FROM notifications WHERE status='Active' ORDER BY id DESC LIMIT 1");
+$notice_data = mysqli_fetch_assoc($notice_result);
+$important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!';
+?>
+<div style="background-color: #dc3545; color: #fff; padding: 8px 20px; overflow:hidden; white-space:nowrap;">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        📢 Important Notice: <?php echo $important_notice; ?>
+    </marquee>
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
@@ -111,3 +131,11 @@ $notifications = 7;
 </div>
 </body>
 </html>
+<div class="col-md-2 sidebar">
+    <h4>KDA ERP</h4>
+    <a href="dashboard.php">📊 Dashboard</a>
+    <a href="../employees/employee_list.php">👥 Employees</a>
+    <a href="../branches/branch_list.php">🏢 Branches</a>
+    <a href="company_info_edit.php">⚙️ Company Info Settings</a>
+    <a href="../../logout.php">🚪 Logout</a>
+</div>
