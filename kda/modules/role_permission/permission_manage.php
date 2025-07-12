@@ -1,5 +1,5 @@
 <?php
-include('../../../config/db.php');
+include('../../../config/db_connect.php');  // ✅ ঠিক করলাম
 include('../../../includes/header.php');
 
 if(!isset($_GET['id'])){
@@ -7,10 +7,7 @@ if(!isset($_GET['id'])){
 }
 $designation_id = $_GET['id'];
 
-// get all permissions
 $permissions = mysqli_query($conn, "SELECT * FROM permissions");
-
-// get assigned permissions for this designation
 $assigned_permissions = mysqli_query($conn, "SELECT permission_id FROM role_permissions WHERE designation_id='$designation_id'");
 
 $assigned = [];
@@ -18,13 +15,10 @@ while($row = mysqli_fetch_assoc($assigned_permissions)) {
   $assigned[] = $row['permission_id'];
 }
 ?>
-
 <div class="container mt-4">
   <h4 class="mb-4">Manage Permissions for Designation ID: <?php echo $designation_id; ?></h4>
-
   <form method="post" action="permission_save.php">
     <input type="hidden" name="designation_id" value="<?php echo $designation_id; ?>">
-
     <div class="row">
       <?php while($p = mysqli_fetch_assoc($permissions)) { ?>
         <div class="col-md-4 mb-2">
@@ -36,10 +30,8 @@ while($row = mysqli_fetch_assoc($assigned_permissions)) {
         </div>
       <?php } ?>
     </div>
-
     <button type="submit" class="btn btn-primary mt-3">Save Permissions</button>
     <a href="role_list.php" class="btn btn-secondary mt-3">Back</a>
   </form>
 </div>
-
 <?php include('../../../includes/footer.php'); ?>
