@@ -4,10 +4,10 @@ include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 $company_result = mysqli_query($conn, "SELECT * FROM company_info LIMIT 1");
 $company = mysqli_fetch_assoc($company_result);
 ?>
-<div style="background-color: #f8f9fa; padding: 6px 20px; font-size: 14px; color: #333;">
-    📧 Email: <?php echo $company['care@kdafinance.in']; ?> |
-    📞 Contact: <?php echo $company['phone0']; ?> |
-    🌐 Website: <?php echo $company['https://www.kdafinance.in']; ?>
+<div style="background-color: #f8f9fa; padding: 8px 20px; font-size: 14px; color: #333;">
+    📧 Email: <?php echo $company['email']; ?> |
+    📞 Contact: <?php echo $company['phone']; ?> |
+    🌐 Website: <?php echo $company['website']; ?>
 </div>
 <?php
 session_start();
