@@ -1,50 +1,48 @@
 <?php
-include '../../config/db_connect.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-$stmt = $pdo->query("SELECT * FROM designations ORDER BY id DESC");
-$designations = $stmt->fetchAll();
+$result = mysqli_query($conn, "SELECT * FROM designations ORDER BY id ASC");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
   <title>Designation List</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container mt-5">
-  <div class="card shadow p-4">
-    <h4 class="mb-3">📋 Designation List</h4>
-    <a href="designation_add.php" class="btn btn-success mb-3">+ Add New</a>
-
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($designations as $d): ?>
-        <tr>
-          <td><?php echo $d['id']; ?></td>
-          <td><?php echo $d['title']; ?></td>
-          <td><?php echo $d['status']==1 ? 'Active' : 'Inactive'; ?></td>
-          <td>
-            <a href="designation_edit.php?id=<?php echo $d['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-            <a href="designation_delete.php?id=<?php echo $d['id']; ?>" onclick="return confirm('Delete this?');" class="btn btn-sm btn-danger">Delete</a>
-          </td>
-        </tr>
-        <?php endforeach ?>
-      </tbody>
-    </table>
-
+  <div class="d-flex justify-content-between mb-4">
+    <h4>📝 Designation List</h4>
+    <a href="designation_add.php" class="btn btn-primary">➕ Add New Designation</a>
   </div>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Designation Name</th>
+        <th style="width:180px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while($row = mysqli_fetch_assoc($result)) { ?>
+      <tr>
+        <td><?php echo $row['id']; ?></td>
+        <td><?php echo $row['designation_name']; ?></td>
+        <td>
+          <a href="designation_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">✏️ Edit</a>
+          <a href="designation_delete.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm"
+             onclick="return confirm('Are you sure you want to delete this?');">🗑️ Delete</a>
+        </td>
+      </tr>
+      <?php } ?>
+    </tbody>
+  </table>
+
+  <a href="../admin/dashboard.php" class="btn btn-secondary">← Back to Dashboard</a>
 </div>
 
 </body>

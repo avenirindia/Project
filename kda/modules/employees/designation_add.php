@@ -1,32 +1,30 @@
 <?php
-include '../../config/db_connect.php';
-$permissions = $pdo->query("SELECT * FROM permissions ORDER BY permission_name ASC")->fetchAll();
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $title = $_POST['title'];
-  $status = $_POST['status'];
-  $pdo->prepare("INSERT INTO designations (title, status) VALUES (?, ?)")->execute([$title, $status]);
-  $designation_id = $pdo->lastInsertId();
-
-  if (!empty($_POST['permissions'])) {
-    foreach ($_POST['permissions'] as $pid) {
-      $pdo->prepare("INSERT INTO designation_permissions (designation_id, permission_id) VALUES (?, ?)")->execute([$designation_id, $pid]);
-    }
-  }
-
-  header("Location: designation_list.php");
-  exit;
-}
+// Fetch designations
+$result = mysqli_query($conn, "SELECT * FROM designations");
 ?>
 
-<form method="POST">
-<input type="text" name="title" required placeholder="Designation Title"><br>
-<select name="status"><option value="1">Active</option><option value="0">Inactive</option></select><br>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Designation</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+</head>
+<body>
 
-<h5>Permissions:</h5>
-<?php foreach($permissions as $p): ?>
-<label><input type="checkbox" name="permissions[]" value="<?= $p['id'] ?>"> <?= $p['permission_name'] ?></label><br>
-<?php endforeach ?>
+<div class="container mt-5">
+    <h4>➕ Add New Designation</h4>
+    <form method="POST" action="designation_add_save.php">
+        <div class="mb-3">
+            <label>Designation Name</label>
+            <input type="text" name="designation_name" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Designation</button>
+        <a href="designation_list.php" class="btn btn-secondary">← Back to List</a>
+    </form>
+</div>
 
-<button type="submit">Save</button>
-</form>
+</body>
+</html>

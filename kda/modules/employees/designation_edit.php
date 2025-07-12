@@ -1,66 +1,48 @@
 <?php
-include '../../config/db_connect.php';
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-if (!isset($_GET['id'])) {
-  die("Invalid Request! No ID passed.");
+if(!isset($_GET['id'])) {
+    echo "<div class='alert alert-danger'>ID missing!</div>";
+    exit();
 }
 
 $id = $_GET['id'];
+$result = mysqli_query($conn, "SELECT * FROM designations WHERE id=$id");
+$row = mysqli_fetch_assoc($result);
 
-$designation = $pdo->prepare("SELECT * FROM designations WHERE id=?");
-$designation->execute([$id]);
-$data = $designation->fetch();
-
-if (!$data) {
-  die("Designation not found for this ID.");
+if(!$row) {
+    echo "<div class='alert alert-danger'>Designation not found!</div>";
+    exit();
 }
-?>
-<?php
-include '../../config/db_connect.php';
-$id = $_GET['id'];
 
-$designation = $pdo->prepare("SELECT * FROM designations WHERE id=?");
-$designation->execute([$id]);
-$data = $designation->fetch();
-
-$permissions = $pdo->query("SELECT * FROM permissions ORDER BY permission_name ASC")->fetchAll();
-
-$assigned = $pdo->prepare("SELECT permission_id FROM designation_permissions WHERE designation_id=?");
-$assigned->execute([$id]);
-$assigned_permissions = $assigned->fetchAll(PDO::FETCH_COLUMN);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $title = $_POST['title'];
-  $status = $_POST['status'];
-  $pdo->prepare("UPDATE designations SET title=?, status=? WHERE id=?")->execute([$title, $status, $id]);
-
-  $pdo->prepare("DELETE FROM designation_permissions WHERE designation_id=?")->execute([$id]);
-
-  if (!empty($_POST['permissions'])) {
-    foreach ($_POST['permissions'] as $pid) {
-      $pdo->prepare("INSERT INTO designation_permissions (designation_id, permission_id) VALUES (?, ?)")->execute([$id, $pid]);
-    }
-  }
-
-  header("Location: designation_list.php");
-  exit;
+if(isset($_POST['update'])) {
+    $designation_name = $_POST['designation_name'];
+    mysqli_query($conn, "UPDATE designations SET designation_name='$designation_name' WHERE id=$id");
+    header("Location: designation_list.php");
+    exit();
 }
 ?>
 
-<form method="POST">
-<input type="text" name="title" value="<?= $data['title'] ?>" required><br>
-<select name="status">
-  <option value="1" <?= $data['status'] ? 'selected' : '' ?>>Active</option>
-  <option value="0" <?= !$data['status'] ? 'selected' : '' ?>>Inactive</option>
-</select><br>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Designation</title>
+  <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+</head>
+<body>
 
-<h5>Permissions:</h5>
-<?php foreach($permissions as $p): ?>
-<label>
-  <input type="checkbox" name="permissions[]" value="<?= $p['id'] ?>" 
-  <?= in_array($p['id'], $assigned_permissions) ? 'checked' : '' ?>> <?= $p['permission_name'] ?>
-</label><br>
-<?php endforeach ?>
+<div class="container mt-5">
+  <h4>✏️ Edit Designation</h4>
+  <form method="POST">
+    <div class="mb-3">
+      <label>Designation Name</label>
+      <input type="text" name="designation_name" value="<?php echo $row['designation_name']; ?>" class="form-control" required>
+    </div>
+    <button type="submit" name="update" class="btn btn-primary">Update Designation</button>
+    <a href="designation_list.php" class="btn btn-secondary">← Back to List</a>
+  </form>
+</div>
 
-<button type="submit">Update</button>
-</form>
+</body>
+</html>
