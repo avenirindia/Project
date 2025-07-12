@@ -1,27 +1,24 @@
 <?php
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+
+// আজকের তারিখ
 $today = date('j');
 
-// Check today’s rent due branches
+// আজকে যেসব ব্রাঞ্চের ভাড়া দেওয়ার তারিখ সেই লিস্ট
 $query = "SELECT * FROM branches WHERE rent_payment_date = $today";
 $result = mysqli_query($conn, $query);
 
+// যদি আজকের জন্য ডিউ থাকে
 while ($branch = mysqli_fetch_assoc($result)) {
     $msg = "📢 Rent Payment Due Today for Branch: " . $branch['branch_name'];
 
-    // Check if this message already inserted today for Accounts (11)
-    $check1 = mysqli_query($conn, "SELECT id FROM notifications 
-               WHERE message = '$msg' AND target_designation_id = 11 AND DATE(created_at) = CURDATE()");
-    if (mysqli_num_rows($check1) == 0) {
-        mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
+    // Accounts Access = 11
+    mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
               VALUES ('$msg', 11)");
-    }
 
-    // Check if this message already inserted today for Admin (1)
-    $check2 = mysqli_query($conn, "SELECT id FROM notifications 
-               WHERE message = '$msg' AND target_designation_id = 1 AND DATE(created_at) = CURDATE()");
-    if (mysqli_num_rows($check2) == 0) {
-        mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
+    // Admin = 1
+    mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
               VALUES ('$msg', 1)");
-    }
 }
 ?>
