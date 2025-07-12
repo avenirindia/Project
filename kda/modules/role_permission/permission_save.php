@@ -1,5 +1,5 @@
 <?php
-include('../../config/db.php');
+include('../../../config/db_connect.php');
 
 $designation_id = $_POST['designation_id'];
 $permissions = isset($_POST['permissions']) ? $_POST['permissions'] : [];
