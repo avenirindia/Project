@@ -2,20 +2,15 @@
 session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-if(!isset($_GET['id'])) {
-  $_SESSION['error'] = "Invalid request!";
-  header("Location: permission_list.php");
-  exit();
-}
-
 $id = $_GET['id'];
-$res = mysqli_query($conn, "SELECT * FROM permissions WHERE id=$id");
-$data = mysqli_fetch_assoc($res);
+$result = mysqli_query($conn, "SELECT * FROM permissions WHERE id=$id");
+$row = mysqli_fetch_assoc($result);
 
-if(!$data) {
-  $_SESSION['error'] = "Permission not found!";
-  header("Location: permission_list.php");
-  exit();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['permission_name'];
+    mysqli_query($conn, "UPDATE permissions SET permission_name='$name' WHERE id=$id");
+    header("Location: permission_list.php");
+    exit();
 }
 ?>
 
@@ -23,22 +18,19 @@ if(!$data) {
 <html>
 <head>
   <title>Edit Permission</title>
-  <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="p-4">
 
-<div class="container mt-5">
-  <h4>✏️ Edit Permission</h4>
-
-  <form method="POST" action="permission_edit_save.php">
-    <input type="hidden" name="id" value="<?php echo $data['id']; ?>">
+<div class="container">
+  <h3>✏️ Edit Permission</h3>
+  <form method="POST">
     <div class="mb-3">
       <label>Permission Name</label>
-      <input type="text" name="permission_name" value="<?php echo $data['permission_name']; ?>" class="form-control" required>
+      <input type="text" name="permission_name" value="<?= $row['permission_name'] ?>" class="form-control" required>
     </div>
-
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a href="permission_list.php" class="btn btn-secondary">Back to List</a>
+    <button type="submit" class="btn btn-primary">💾 Update</button>
+    <a href="permission_list.php" class="btn btn-secondary">⬅️ Back</a>
   </form>
 </div>
 

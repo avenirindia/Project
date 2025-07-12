@@ -2,59 +2,42 @@
 session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-$result = mysqli_query($conn, "SELECT * FROM permissions ORDER BY id DESC");
+$result = mysqli_query($conn, "SELECT * FROM permissions");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
   <title>Permission List</title>
-  <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="p-4">
 
-<div class="container mt-5">
-  <h4>📋 Permission List</h4>
+<div class="container">
+  <h3>🔐 Permission List</h3>
+  <a href="permission_add.php" class="btn btn-success mb-3">➕ Add Permission</a>
 
-  <?php
-  if(isset($_SESSION['error'])) {
-    echo "<div class='alert alert-danger'>".$_SESSION['error']."</div>";
-    unset($_SESSION['error']);
-  }
-  if(isset($_SESSION['success'])) {
-    echo "<div class='alert alert-success'>".$_SESSION['success']."</div>";
-    unset($_SESSION['success']);
-  }
-  ?>
-
-  <a href="permission_add.php" class="btn btn-primary mb-3">➕ Add Permission</a>
-
-  <table class="table table-bordered table-striped">
-    <thead class="table-dark">
+  <table class="table table-bordered">
+    <thead>
       <tr>
-        <th>#</th>
+        <th>ID</th>
         <th>Permission Name</th>
-        <th>Action</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <?php
-      $sl = 1;
-      while($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>".$sl++."</td>";
-        echo "<td>".$row['permission_name']."</td>";
-        echo "<td>
-                <a href='permission_edit.php?id=".$row['id']."' class='btn btn-sm btn-warning'>✏️ Edit</a>
-                <a href='permission_delete.php?id=".$row['id']."' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure?\")'>🗑️ Delete</a>
-              </td>";
-        echo "</tr>";
-      }
-      ?>
+    <?php while($row = mysqli_fetch_assoc($result)) { ?>
+      <tr>
+        <td><?= $row['id'] ?></td>
+        <td><?= $row['permission_name'] ?></td>
+        <td>
+          <a href="permission_edit.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm">✏️ Edit</a>
+          <a href="permission_delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this permission?');" class="btn btn-danger btn-sm">🗑️ Delete</a>
+        </td>
+      </tr>
+    <?php } ?>
     </tbody>
   </table>
-
-  <a href="../admin/dashboard.php" class="btn btn-secondary mt-3">← Back to Dashboard</a>
 </div>
 
 </body>
