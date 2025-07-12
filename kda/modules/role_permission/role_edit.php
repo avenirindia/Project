@@ -1,37 +1,57 @@
 <?php
-include('../../config/constants.php');
-include(BASE_PATH . '/config/db_connect.php');
-include(BASE_PATH . '/includes/header.php');
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-// Check if id is provided
-if(!isset($_GET['id'])){
-  die("Designation ID not provided.");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
 }
 
-$designation_id = $_GET['id'];
-
-// Fetch current designation data
-$result = mysqli_query($conn, "SELECT * FROM designations WHERE id='$designation_id'");
-if(mysqli_num_rows($result) == 0){
-  die("Designation not found.");
+if (!isset($_GET['id'])) {
+    die("Invalid Request");
 }
+
+$id = $_GET['id'];
+$result = mysqli_query($conn, "SELECT * FROM designations WHERE id=$id");
 $data = mysqli_fetch_assoc($result);
+
+if (!$data) {
+    die("Designation not found");
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $designation_name = $_POST['designation_name'];
+    mysqli_query($conn, "UPDATE designations SET designation_name='$designation_name' WHERE id=$id");
+    header("Location: role_list.php");
+    exit();
+}
 ?>
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Designation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
 <div class="container mt-5">
-  <h4 class="mb-4">Edit Designation</h4>
-
-  <form action="role_edit_save.php" method="post">
-    <input type="hidden" name="designation_id" value="<?php echo $designation_id; ?>">
-
-    <div class="mb-3">
-      <label for="designation_name" class="form-label">Designation Name</label>
-      <input type="text" class="form-control" id="designation_name" name="designation_name" value="<?php echo htmlspecialchars($data['designation_name']); ?>" required>
+    <div class="card shadow-lg">
+        <div class="card-header bg-warning text-dark">
+            <h5>✏️ Edit Designation</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Designation Name</label>
+                    <input type="text" name="designation_name" value="<?php echo $data['designation_name']; ?>" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">💾 Update</button>
+                <a href="role_list.php" class="btn btn-secondary">🔙 Back</a>
+            </form>
+        </div>
     </div>
-
-    <button type="submit" class="btn btn-success">Update</button>
-    <a href="role_list.php" class="btn btn-secondary">Cancel</a>
-  </form>
 </div>
 
-<?php include(BASE_PATH . '/includes/footer.php'); ?>
+</body>
+</html>

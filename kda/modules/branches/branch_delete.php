@@ -1,16 +1,16 @@
 <?php
 session_start();
-include('../config/db.php');
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-// Check ID passed
+// Check if branch ID exists
 if (!isset($_GET['id'])) {
-    echo "<div class='alert alert-danger m-3'>Invalid Request!</div>";
+    echo "<div class='alert alert-danger m-3'>Invalid Branch Delete Request!</div>";
     exit();
 }
 
 $id = $_GET['id'];
 
-// Check if branch exists
+// Confirm branch exists before delete
 $result = mysqli_query($conn, "SELECT * FROM branches WHERE id = $id");
 $branch = mysqli_fetch_assoc($result);
 
@@ -19,10 +19,21 @@ if (!$branch) {
     exit();
 }
 
-// Delete query
-mysqli_query($conn, "DELETE FROM branches WHERE id = $id");
+// Delete branch query
+$delete = mysqli_query($conn, "DELETE FROM branches WHERE id = $id");
 
-// Redirect to branch list
-header("Location: branch_list.php?msg=Branch Deleted Successfully");
-exit();
+if ($delete) {
+    // Optional: unlink documents from uploads folder if needed
+    // unlink("../../uploads/".$branch['aadhaar_copy']);
+    // unlink("../../uploads/".$branch['pan_copy']);
+    // unlink("../../uploads/".$branch['bank_passbook']);
+    // unlink("../../uploads/".$branch['tax_receipt']);
+    // unlink("../../uploads/".$branch['agreement_copy']);
+    // unlink("../../uploads/".$branch['police_intimation']);
+
+    header("Location: branch_list.php?deleted=1");
+    exit();
+} else {
+    echo "<div class='alert alert-danger m-3'>Failed to delete branch. Try again!</div>";
+}
 ?>

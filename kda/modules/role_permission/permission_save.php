@@ -1,6 +1,5 @@
 <?php
-include('../../config/constants.php');
-include(BASE_PATH . '/config/db_connect.php');
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
 if(!isset($_POST['designation_id'])){
   die("Designation ID missing.");

@@ -1,19 +1,33 @@
 <?php
-include('../../config/constants.php');
-include(BASE_PATH . '/config/db_connect.php');
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-// Check if data provided
-if(!isset($_POST['designation_id']) || !isset($_POST['designation_name'])){
-  die("Required data missing.");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
 }
 
-$designation_id = $_POST['designation_id'];
-$designation_name = mysqli_real_escape_string($conn, $_POST['designation_name']);
+if (!isset($_GET['id'])) {
+    die("Invalid Request");
+}
 
-// Update query
-mysqli_query($conn, "UPDATE designations SET designation_name='$designation_name' WHERE id='$designation_id'");
+$id = $_GET['id'];
 
-// Redirect
-header("Location: role_list.php?msg=Designation updated successfully");
-exit;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $designation_name = $_POST['designation_name'];
+
+    if (empty($designation_name)) {
+        die("Designation Name is required.");
+    }
+
+    $query = "UPDATE designations SET designation_name='$designation_name' WHERE id=$id";
+    if (mysqli_query($conn, $query)) {
+        header("Location: role_list.php");
+        exit();
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+} else {
+    echo "Invalid Request.";
+}
 ?>

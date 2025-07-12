@@ -1,21 +1,18 @@
 <?php
-include('../../config/constants.php');
-include(BASE_PATH . '/config/db_connect.php');
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-// Check if id is provided
-if(!isset($_GET['id'])){
-  die("Designation ID not provided.");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
 }
 
-$designation_id = $_GET['id'];
+if (!isset($_GET['id'])) {
+    die("Invalid Request");
+}
 
-// Delete the designation
-mysqli_query($conn, "DELETE FROM designations WHERE id='$designation_id'");
-
-// Delete related role permissions (optional, if you want to clean up)
-mysqli_query($conn, "DELETE FROM role_permissions WHERE designation_id='$designation_id'");
-
-// Redirect back to role list
-header("Location: role_list.php?msg=Designation deleted successfully");
-exit;
+$id = $_GET['id'];
+mysqli_query($conn, "DELETE FROM designations WHERE id=$id");
+header("Location: role_list.php");
+exit();
 ?>

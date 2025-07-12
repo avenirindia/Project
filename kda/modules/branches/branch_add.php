@@ -1,128 +1,134 @@
 <?php
 session_start();
-include('../config/db.php');
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-// Session Validate
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
-    exit();
-}
-
-// Check GET id
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    echo "<div class='alert alert-danger m-3'>Invalid Request!</div>";
-    exit();
-}
-
-$id = intval($_GET['id']);
-
-// Fetch branch details
-$result = mysqli_query($conn, "SELECT * FROM branches WHERE id = $id");
-$branch = mysqli_fetch_assoc($result);
-
-if (!$branch) {
-    echo "<div class='alert alert-danger m-3'>Branch not found!</div>";
-    exit();
-}
+// Branch Code Generate
+$ym = date('Ym');
+$result = mysqli_query($conn, "SELECT COUNT(*) AS total FROM branches WHERE DATE_FORMAT(opening_date, '%Y%m') = '$ym'");
+$row = mysqli_fetch_assoc($result);
+$nextNumber = 100 + $row['total'];
+$newCode = "BR-$ym/$nextNumber";
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Branch Details - <?php echo htmlspecialchars($branch['branch_name']); ?></title>
-  <link rel="stylesheet" href="../assets/bootstrap.min.css">
+    <title>Add Branch</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #map {
+            height: 250px;
+            width: 100%;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 
 <div class="container my-4">
-  <h4 class="mb-3">🏢 Branch Details</h4>
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>➕ Add New Branch</h4>
+        </div>
+        <div class="card-body">
 
-  <div class="card p-4 shadow-sm">
+            <form action="branch_add_save.php" method="POST" enctype="multipart/form-data">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Branch Name</label>
+                        <input type="text" name="branch_name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Branch Code</label>
+                        <input type="text" name="branch_code" value="<?= $newCode ?>" class="form-control" readonly>
+                    </div>
+                </div>
 
-    <h5 class="text-primary">Branch Information</h5>
-    <p><strong>Name:</strong> <?php echo htmlspecialchars($branch['branch_name']); ?></p>
-    <p><strong>Code:</strong> <?php echo htmlspecialchars($branch['branch_code']); ?></p>
-    <p><strong>Address:</strong> <?php echo htmlspecialchars($branch['branch_address']); ?>, PS: <?php echo htmlspecialchars($branch['ps']); ?>, <?php echo htmlspecialchars($branch['district']); ?>, <?php echo htmlspecialchars($branch['state']); ?>, <?php echo htmlspecialchars($branch['pin']); ?></p>
-    <p><strong>Opening Date:</strong> <?php echo date("d-m-Y", strtotime($branch['branch_opening_date'])); ?></p>
+                <h5 class="mt-3">📍 Branch Address</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6"><label>Police Station (PS)</label><input type="text" name="ps" class="form-control" required></div>
+                    <div class="col-md-6"><label>District</label><input type="text" name="district" class="form-control" required></div>
+                    <div class="col-md-6 mt-2"><label>State</label><input type="text" name="state" class="form-control" required></div>
+                    <div class="col-md-6 mt-2"><label>Pin Code</label><input type="text" name="pincode" class="form-control" required></div>
+                </div>
 
-    <hr>
+                <div class="mb-3">
+                    <label>Opening Date</label>
+                    <input type="date" name="opening_date" class="form-control" required>
+                </div>
 
-    <h5 class="text-primary">Landlord Details</h5>
-    <p><strong>Landlord:</strong> <?php echo htmlspecialchars($branch['landlord_name']); ?> (Father's: <?php echo htmlspecialchars($branch['father_name']); ?>)</p>
-    <p><strong>Address:</strong> <?php echo htmlspecialchars($branch['landlord_address']); ?></p>
-    <p><strong>Mobile:</strong> <?php echo htmlspecialchars($branch['landlord_mobile']); ?></p>
-    <p><strong>Land Details:</strong> <?php echo htmlspecialchars($branch['land_details']); ?></p>
+                <h5 class="mt-3">🏠 Landlord Details</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6"><label>Name</label><input type="text" name="landlord_name" class="form-control" required></div>
+                    <div class="col-md-6"><label>Father's Name</label><input type="text" name="father_name" class="form-control" required></div>
+                </div>
+                <div class="mb-3"><label>Address</label><textarea name="landlord_address" class="form-control" required></textarea></div>
+                <div class="mb-3"><label>Mobile Number</label><input type="text" name="landlord_mobile" class="form-control" required></div>
+                <div class="mb-3"><label>Land Details</label><textarea name="land_details" class="form-control" required></textarea></div>
 
-    <hr>
+                <h5 class="mt-3">📄 Documents</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4"><label>Aadhaar Card</label><input type="file" name="aadhaar" class="form-control"></div>
+                    <div class="col-md-4"><label>PAN Card</label><input type="file" name="pan" class="form-control"></div>
+                    <div class="col-md-4"><label>Bank Passbook</label><input type="file" name="passbook" class="form-control"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4"><label>Tax Receipt</label><input type="file" name="tax_receipt" class="form-control"></div>
+                    <div class="col-md-4"><label>Agreement Copy</label><input type="file" name="agreement_copy" class="form-control"></div>
+                    <div class="col-md-4"><label>Police Intimation Letter</label><input type="file" name="police_letter" class="form-control"></div>
+                </div>
 
-    <h5 class="text-primary">Rent & Utilities</h5>
-    <p><strong>Rent Amount:</strong> ₹<?php echo number_format($branch['rent_amount']); ?></p>
-    <p><strong>Advance:</strong> ₹<?php echo number_format($branch['rent_advance_amount']); ?></p>
-    <p><strong>Rent Payment Date:</strong> <?php echo date("d-m-Y", strtotime($branch['rent_payment_date'])); ?></p>
-    <p><strong>Electricity Unit Price:</strong> ₹<?php echo $branch['electricity_unit_price']; ?></p>
-    <p><strong>Start Unit:</strong> <?php echo $branch['start_unit']; ?></p>
+                <h5 class="mt-3">💰 Rent & Utilities</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4"><label>Rent Amount</label><input type="number" name="rent_amount" class="form-control" required></div>
+                    <div class="col-md-4"><label>Rent Advance</label><input type="number" name="advance_amount" class="form-control" required></div>
+                    <div class="col-md-4"><label>Rent Payment Date (1-31)</label><input type="number" name="rent_payment_date" min="1" max="31" class="form-control" required></div>
+                </div>
 
-    <hr>
+                <div class="row mb-3">
+                    <div class="col-md-6"><label>Electricity Unit Price</label><input type="number" step="0.01" name="electricity_price" class="form-control"></div>
+                    <div class="col-md-6"><label>Start Unit</label><input type="number" name="start_unit" class="form-control"></div>
+                </div>
 
-    <h5 class="text-primary">Uploaded Documents</h5>
-    <ul>
-      <?php if(!empty($branch['aadhaar_card'])): ?>
-        <li><a href="../uploads/<?php echo $branch['aadhaar_card']; ?>" target="_blank">Aadhaar Card</a></li>
-      <?php endif; ?>
+                <h5 class="mt-3">🌐 Geo Location</h5>
+                <div id="map"></div>
+                <div class="row mt-3">
+                    <div class="col-md-6"><label>Latitude</label><input type="text" name="latitude" id="latitude" class="form-control" readonly></div>
+                    <div class="col-md-6"><label>Longitude</label><input type="text" name="longitude" id="longitude" class="form-control" readonly></div>
+                </div>
 
-      <?php if(!empty($branch['pan_card'])): ?>
-        <li><a href="../uploads/<?php echo $branch['pan_card']; ?>" target="_blank">PAN Card</a></li>
-      <?php endif; ?>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">➕ Add Branch</button>
+                    <a href="branch_list.php" class="btn btn-secondary">🔙 Back</a>
+                </div>
 
-      <?php if(!empty($branch['bank_passbook'])): ?>
-        <li><a href="../uploads/<?php echo $branch['bank_passbook']; ?>" target="_blank">Bank Passbook</a></li>
-      <?php endif; ?>
-
-      <?php if(!empty($branch['tax_receipt'])): ?>
-        <li><a href="../uploads/<?php echo $branch['tax_receipt']; ?>" target="_blank">Tax Receipt</a></li>
-      <?php endif; ?>
-
-      <?php if(!empty($branch['agreement_copy'])): ?>
-        <li><a href="../uploads/<?php echo $branch['agreement_copy']; ?>" target="_blank">Agreement Copy</a></li>
-      <?php endif; ?>
-
-      <?php if(!empty($branch['police_letter'])): ?>
-        <li><a href="../uploads/<?php echo $branch['police_letter']; ?>" target="_blank">Police Intimation Letter</a></li>
-      <?php endif; ?>
-    </ul>
-
-    <div class="text-end">
-      <a href="branch_list.php" class="btn btn-secondary">⬅️ Back to List</a>
+            </form>
+        </div>
     </div>
-
-  </div>
 </div>
+
+<script>
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 6,
+            center: {lat: 22.5726, lng: 88.3639}  // Kolkata Center Point
+        });
+
+        var marker = new google.maps.Marker({
+            position: {lat: 22.5726, lng: 88.3639},
+            map: map,
+            draggable: true
+        });
+
+        document.getElementById('latitude').value = marker.getPosition().lat();
+        document.getElementById('longitude').value = marker.getPosition().lng();
+
+        google.maps.event.addListener(marker, 'dragend', function () {
+            document.getElementById('latitude').value = marker.getPosition().lat();
+            document.getElementById('longitude').value = marker.getPosition().lng();
+        });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIV5ATUvb1UVaDw32lhTZqbn2v51qEMkU&callback=initMap" async defer></script>
 
 </body>
 </html>
-<div class="text-end mt-4">
-  <a href="branch_edit.php?id=<?php echo $branch['id']; ?>" class="btn btn-primary me-2">✏️ Edit</a>
-
-  <a href="branch_delete.php?id=<?php echo $branch['id']; ?>" class="btn btn-danger me-2"
-     onclick="return confirm('Are you sure you want to delete this branch? This action cannot be undone.');">
-     🗑️ Delete
-  </a>
-
-  <a href="branch_pdf.php?id=<?php echo $branch['id']; ?>" class="btn btn-success">
-    📄 Download PDF
-  </a>
-</div>
-    <div class="text-end mt-4">
-      <a href="branch_edit.php?id=<?php echo $branch['id']; ?>" class="btn btn-primary me-2">✏️ Edit</a>
-
-      <a href="branch_delete.php?id=<?php echo $branch['id']; ?>" class="btn btn-danger me-2"
-         onclick="return confirm('Are you sure you want to delete this branch? This action cannot be undone.');">
-         🗑️ Delete
-      </a>
-
-      <a href="branch_pdf.php?id=<?php echo $branch['id']; ?>" class="btn btn-success">
-        📄 Download PDF
-      </a>
-
-      <a href="branch_list.php" class="btn btn-secondary ms-2">⬅️ Back to List</a>
-    </div>

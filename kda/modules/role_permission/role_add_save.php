@@ -1,15 +1,27 @@
 <?php
-include('../../config/constants.php');
-include(BASE_PATH . '/config/db_connect.php');
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
-if(!isset($_POST['designation_name']) || empty($_POST['designation_name'])){
-  die("Designation Name missing.");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
 }
 
-$designation_name = mysqli_real_escape_string($conn, $_POST['designation_name']);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $designation_name = $_POST['designation_name'];
 
-mysqli_query($conn, "INSERT INTO designations (designation_name) VALUES ('$designation_name')");
+    if (empty($designation_name)) {
+        die("Designation Name is required.");
+    }
 
-header("Location: role_list.php?msg=Designation added successfully");
-exit;
+    $query = "INSERT INTO designations (designation_name) VALUES ('$designation_name')";
+    if (mysqli_query($conn, $query)) {
+        header("Location: role_list.php");
+        exit();
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+} else {
+    echo "Invalid Request.";
+}
 ?>

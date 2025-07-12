@@ -1,4 +1,6 @@
 <?php
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/modules/common/rent_due_check.php');
+
 session_start();
 include('../../config/db.php');
 include('../../modules/common/rent_due_check.php');
