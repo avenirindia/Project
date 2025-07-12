@@ -1,3 +1,4 @@
+<img src="assets/images/logo.png" alt="KDA ERP Logo" width="80">
 <?php
 session_start();
 include('config/db.php');
