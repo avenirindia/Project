@@ -141,3 +141,13 @@ $important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!
     <a href="company_info_edit.php">⚙️ Company Info Settings</a>
     <a href="../../logout.php">🚪 Logout</a>
 </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 p-0">
+      <?php include('sidebar.php'); ?>
+    </div>
+    <div class="col-md-10">
+      <!-- Dashboard content -->
+    </div>
+  </div>
+</div>
