@@ -1,5 +1,33 @@
 <?php
 session_start();
+include('../../config/db.php');
+include('../../modules/common/rent_due_check.php');
+?>
+<?php
+session_start();
+include('../../config/db.php');
+
+// Rent Notification Check
+$today = date('j');
+$query = "SELECT * FROM branches WHERE rent_payment_date = $today";
+$result = mysqli_query($conn, $query);
+
+while ($branch = mysqli_fetch_assoc($result)) {
+    $msg = "📢 Rent Payment Due Today for Branch: " . $branch['branch_name'];
+
+    // Accounts Access = 11
+    mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
+              VALUES ('$msg', 11)");
+
+    // Admin = 1
+    mysqli_query($conn, "INSERT INTO notifications (message, target_designation_id) 
+              VALUES ('$msg', 1)");
+}
+
+// তারপর বাকি ড্যাশবোর্ডের কোড
+?>
+<?php
+session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../login.php");
     exit();
@@ -158,3 +186,23 @@ $important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!
     </div>
   </div>
 </div>
+<?php
+// যেকোনো পেজের শুরুর দিকে session & db config include হবে
+session_start();
+include('../../config/db.php');
+
+// Notification Fetch
+$user_designation_id = $_SESSION['designation_id']; // তোমার session এ designation_id যেভাবে আছে, সেটাই বসাও
+
+$notis = mysqli_query($conn, "SELECT * FROM notifications 
+            WHERE (target_designation_id = $user_designation_id OR target_designation_id = 0)
+            AND is_read = 0
+            ORDER BY created_at DESC");
+
+// Show Notifications
+while ($row = mysqli_fetch_assoc($notis)) {
+    echo "<div class='alert alert-danger mb-2'>
+            <strong>🔔 {$row['message']}</strong> 
+          </div>";
+}
+?>
