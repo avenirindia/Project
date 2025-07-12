@@ -1,68 +1,66 @@
 <?php
 include '../../config/db_connect.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-// যদি id না থাকে — রিডাইরেক্ট বা মেসেজ দেখাও
 if (!isset($_GET['id'])) {
-  die("Invalid Request! ID missing.");
+  die("Invalid Request! No ID passed.");
 }
 
 $id = $_GET['id'];
 
-// ডেটা লোড করার চেষ্টা
-$stmt = $pdo->prepare("SELECT * FROM designations WHERE id = ?");
-$stmt->execute([$id]);
-$data = $stmt->fetch();
+$designation = $pdo->prepare("SELECT * FROM designations WHERE id=?");
+$designation->execute([$id]);
+$data = $designation->fetch();
 
 if (!$data) {
-  die("No designation found for this ID.");
+  die("Designation not found for this ID.");
 }
+?>
+<?php
+include '../../config/db_connect.php';
+$id = $_GET['id'];
 
-// ফর্ম সাবমিট হলে আপডেট করো
+$designation = $pdo->prepare("SELECT * FROM designations WHERE id=?");
+$designation->execute([$id]);
+$data = $designation->fetch();
+
+$permissions = $pdo->query("SELECT * FROM permissions ORDER BY permission_name ASC")->fetchAll();
+
+$assigned = $pdo->prepare("SELECT permission_id FROM designation_permissions WHERE designation_id=?");
+$assigned->execute([$id]);
+$assigned_permissions = $assigned->fetchAll(PDO::FETCH_COLUMN);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $title = $_POST['title'];
   $status = $_POST['status'];
+  $pdo->prepare("UPDATE designations SET title=?, status=? WHERE id=?")->execute([$title, $status, $id]);
 
-  $update = $pdo->prepare("UPDATE designations SET title=?, status=? WHERE id=?");
-  $update->execute([$title, $status, $id]);
+  $pdo->prepare("DELETE FROM designation_permissions WHERE designation_id=?")->execute([$id]);
+
+  if (!empty($_POST['permissions'])) {
+    foreach ($_POST['permissions'] as $pid) {
+      $pdo->prepare("INSERT INTO designation_permissions (designation_id, permission_id) VALUES (?, ?)")->execute([$id, $pid]);
+    }
+  }
 
   header("Location: designation_list.php");
   exit;
 }
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Edit Designation</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<form method="POST">
+<input type="text" name="title" value="<?= $data['title'] ?>" required><br>
+<select name="status">
+  <option value="1" <?= $data['status'] ? 'selected' : '' ?>>Active</option>
+  <option value="0" <?= !$data['status'] ? 'selected' : '' ?>>Inactive</option>
+</select><br>
 
-<div class="container mt-5">
-  <div class="card shadow p-4">
-    <h4 class="mb-3">✏️ Edit Designation</h4>
+<h5>Permissions:</h5>
+<?php foreach($permissions as $p): ?>
+<label>
+  <input type="checkbox" name="permissions[]" value="<?= $p['id'] ?>" 
+  <?= in_array($p['id'], $assigned_permissions) ? 'checked' : '' ?>> <?= $p['permission_name'] ?>
+</label><br>
+<?php endforeach ?>
 
-    <form method="POST">
-      <div class="mb-3">
-        <label>Designation Title</label>
-        <input type="text" name="title" value="<?php echo $data['title']; ?>" required class="form-control">
-      </div>
-
-      <div class="mb-3">
-        <label>Status</label>
-        <select name="status" class="form-select">
-          <option value="1" <?php if($data['status']==1) echo "selected"; ?>>Active</option>
-          <option value="0" <?php if($data['status']==0) echo "selected"; ?>>Inactive</option>
-        </select>
-      </div>
-
-      <button type="submit" class="btn btn-primary">Update</button>
-      <a href="designation_list.php" class="btn btn-secondary">← Back</a>
-    </form>
-  </div>
-</div>
-
-</body>
-</html>
+<button type="submit">Update</button>
+</form>
