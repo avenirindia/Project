@@ -206,3 +206,14 @@ while ($row = mysqli_fetch_assoc($notis)) {
           </div>";
 }
 ?>
+<?php
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/modules/common/rent_due_check.php');
+?>
+
+<!-- এখানে তোমার dashboard html content থাকবে -->
+<div class="container">
+  <h2>Welcome to KDA Microfinance ERP</h2>
+  <p>...</p>
+</div>
