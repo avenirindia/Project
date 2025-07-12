@@ -1,4 +1,3 @@
-<img src="assets/images/logo.png" alt="KDA ERP Logo" width="80">
 <?php
 session_start();
 include('config/db.php');
@@ -61,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="card shadow login-card">
     <div class="card-header text-center text-white">
-        
+        <img src="assets/images/logo.png" alt="Logo" class="logo">
         <h4>🔐 KDA Microfinance ERP</h4>
         <small>Login to your account</small>
     </div>
