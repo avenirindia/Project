@@ -3,12 +3,23 @@ include '../../config/db_connect.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// যদি id না থাকে — রিডাইরেক্ট বা মেসেজ দেখাও
+if (!isset($_GET['id'])) {
+  die("Invalid Request! ID missing.");
+}
+
 $id = $_GET['id'];
 
+// ডেটা লোড করার চেষ্টা
 $stmt = $pdo->prepare("SELECT * FROM designations WHERE id = ?");
 $stmt->execute([$id]);
 $data = $stmt->fetch();
 
+if (!$data) {
+  die("No designation found for this ID.");
+}
+
+// ফর্ম সাবমিট হলে আপডেট করো
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $title = $_POST['title'];
   $status = $_POST['status'];
