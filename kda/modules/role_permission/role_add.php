@@ -1,5 +1,7 @@
-<?php include('../../config/db.php'); ?>
-<?php include('../../includes/header.php'); ?>
+<?php
+include('../../config/constants.php');
+include(BASE_PATH . '/config/db_connect.php');
+?>
 <div class="container mt-4">
   <h4 class="mb-4">Add New Designation</h4>
   <form method="post" action="role_add_save.php">
