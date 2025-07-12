@@ -2,153 +2,101 @@
 session_start();
 include('../config/db.php');
 
-// Auto Branch Code generate
-$codeResult = mysqli_query($conn, "SELECT MAX(id) AS max_id FROM branches");
-$row = mysqli_fetch_assoc($codeResult);
-$new_id = $row['max_id'] + 1;
-$branch_code = "BR" . str_pad($new_id, 5, '0', STR_PAD_LEFT);
+// Session Validate
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+// Check GET id
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo "<div class='alert alert-danger m-3'>Invalid Request!</div>";
+    exit();
+}
+
+$id = intval($_GET['id']);
+
+// Fetch branch details
+$result = mysqli_query($conn, "SELECT * FROM branches WHERE id = $id");
+$branch = mysqli_fetch_assoc($result);
+
+if (!$branch) {
+    echo "<div class='alert alert-danger m-3'>Branch not found!</div>";
+    exit();
+}
 ?>
 
-<form action="branch_add_save.php" method="POST" enctype="multipart/form-data" class="p-4 border rounded shadow-sm">
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Branch Details - <?php echo htmlspecialchars($branch['branch_name']); ?></title>
+  <link rel="stylesheet" href="../assets/bootstrap.min.css">
+</head>
+<body>
 
-  <h4 class="mb-3">➕ Add New Branch</h4>
+<div class="container my-4">
+  <h4 class="mb-3">🏢 Branch Details</h4>
 
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <label class="form-label">Branch Name</label>
-      <input type="text" name="branch_name" class="form-control" required>
+  <div class="card p-4 shadow-sm">
+
+    <h5 class="text-primary">Branch Information</h5>
+    <p><strong>Name:</strong> <?php echo htmlspecialchars($branch['branch_name']); ?></p>
+    <p><strong>Code:</strong> <?php echo htmlspecialchars($branch['branch_code']); ?></p>
+    <p><strong>Address:</strong> <?php echo htmlspecialchars($branch['branch_address']); ?>, PS: <?php echo htmlspecialchars($branch['ps']); ?>, <?php echo htmlspecialchars($branch['district']); ?>, <?php echo htmlspecialchars($branch['state']); ?>, <?php echo htmlspecialchars($branch['pin']); ?></p>
+    <p><strong>Opening Date:</strong> <?php echo date("d-m-Y", strtotime($branch['branch_opening_date'])); ?></p>
+
+    <hr>
+
+    <h5 class="text-primary">Landlord Details</h5>
+    <p><strong>Landlord:</strong> <?php echo htmlspecialchars($branch['landlord_name']); ?> (Father's: <?php echo htmlspecialchars($branch['father_name']); ?>)</p>
+    <p><strong>Address:</strong> <?php echo htmlspecialchars($branch['landlord_address']); ?></p>
+    <p><strong>Mobile:</strong> <?php echo htmlspecialchars($branch['landlord_mobile']); ?></p>
+    <p><strong>Land Details:</strong> <?php echo htmlspecialchars($branch['land_details']); ?></p>
+
+    <hr>
+
+    <h5 class="text-primary">Rent & Utilities</h5>
+    <p><strong>Rent Amount:</strong> ₹<?php echo number_format($branch['rent_amount']); ?></p>
+    <p><strong>Advance:</strong> ₹<?php echo number_format($branch['rent_advance_amount']); ?></p>
+    <p><strong>Rent Payment Date:</strong> <?php echo date("d-m-Y", strtotime($branch['rent_payment_date'])); ?></p>
+    <p><strong>Electricity Unit Price:</strong> ₹<?php echo $branch['electricity_unit_price']; ?></p>
+    <p><strong>Start Unit:</strong> <?php echo $branch['start_unit']; ?></p>
+
+    <hr>
+
+    <h5 class="text-primary">Uploaded Documents</h5>
+    <ul>
+      <?php if(!empty($branch['aadhaar_card'])): ?>
+        <li><a href="../uploads/<?php echo $branch['aadhaar_card']; ?>" target="_blank">Aadhaar Card</a></li>
+      <?php endif; ?>
+
+      <?php if(!empty($branch['pan_card'])): ?>
+        <li><a href="../uploads/<?php echo $branch['pan_card']; ?>" target="_blank">PAN Card</a></li>
+      <?php endif; ?>
+
+      <?php if(!empty($branch['bank_passbook'])): ?>
+        <li><a href="../uploads/<?php echo $branch['bank_passbook']; ?>" target="_blank">Bank Passbook</a></li>
+      <?php endif; ?>
+
+      <?php if(!empty($branch['tax_receipt'])): ?>
+        <li><a href="../uploads/<?php echo $branch['tax_receipt']; ?>" target="_blank">Tax Receipt</a></li>
+      <?php endif; ?>
+
+      <?php if(!empty($branch['agreement_copy'])): ?>
+        <li><a href="../uploads/<?php echo $branch['agreement_copy']; ?>" target="_blank">Agreement Copy</a></li>
+      <?php endif; ?>
+
+      <?php if(!empty($branch['police_letter'])): ?>
+        <li><a href="../uploads/<?php echo $branch['police_letter']; ?>" target="_blank">Police Intimation Letter</a></li>
+      <?php endif; ?>
+    </ul>
+
+    <div class="text-end">
+      <a href="branch_list.php" class="btn btn-secondary">⬅️ Back to List</a>
     </div>
-    <div class="col-md-6">
-      <label class="form-label">Branch Code</label>
-      <input type="text" name="branch_code" value="<?php echo $branch_code; ?>" readonly class="form-control">
-    </div>
+
   </div>
+</div>
 
-  <div class="mb-3">
-    <label class="form-label">Branch Address</label>
-    <textarea name="branch_address" class="form-control" rows="2" required></textarea>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label class="form-label">Police Station (PS)</label>
-      <input type="text" name="ps" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">District</label>
-      <input type="text" name="district" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">State</label>
-      <input type="text" name="state" class="form-control">
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Pin Code</label>
-    <input type="text" name="pin" class="form-control" pattern="\d{6}">
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Geo Location (Latitude, Longitude)</label>
-    <input type="text" name="location" class="form-control">
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Branch Opening Date</label>
-    <input type="date" name="opening_date" class="form-control" required>
-  </div>
-
-  <h5 class="mt-4">🏠 Landlord Details</h5>
-
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <label class="form-label">Landlord Name</label>
-      <input type="text" name="landlord_name" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Father's Name</label>
-      <input type="text" name="father_name" class="form-control">
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Landlord Address</label>
-    <textarea name="landlord_address" class="form-control" rows="2"></textarea>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Landlord Mobile No</label>
-    <input type="text" name="landlord_mobile" class="form-control" pattern="\d{10}">
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Land Details</label>
-    <textarea name="land_details" class="form-control" rows="2"></textarea>
-  </div>
-
-  <h5 class="mt-4">📝 Upload Documents</h5>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label class="form-label">Aadhaar Card</label>
-      <input type="file" name="aadhaar" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">PAN Card</label>
-      <input type="file" name="pan" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">Bank Passbook</label>
-      <input type="file" name="passbook" class="form-control">
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label class="form-label">Tax Receipt</label>
-      <input type="file" name="tax_receipt" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">Agreement Copy</label>
-      <input type="file" name="agreement" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">Police Intimation Letter</label>
-      <input type="file" name="police_letter" class="form-control">
-    </div>
-  </div>
-
-  <h5 class="mt-4">💰 Rent & Utilities</h5>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label class="form-label">Rent Amount (₹)</label>
-      <input type="number" name="rent_amount" class="form-control" required>
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">Rent Advance Amount (₹)</label>
-      <input type="number" name="rent_advance" class="form-control">
-    </div>
-    <div class="col-md-4">
-      <label class="form-label">Rent Payment Date (1-31)</label>
-      <input type="number" name="rent_payment_date" class="form-control" min="1" max="31" required>
-    </div>
-  </div>
-
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <label class="form-label">Electricity Unit Price (₹)</label>
-      <input type="number" step="0.01" name="electricity_unit_price" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Starting Unit</label>
-      <input type="number" name="start_unit" class="form-control">
-    </div>
-  </div>
-
-  <div class="text-end">
-    <button type="submit" class="btn btn-primary px-4">Save Branch</button>
-  </div>
-
-</form>
+</body>
+</html>
