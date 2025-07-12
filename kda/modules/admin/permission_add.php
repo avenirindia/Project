@@ -9,7 +9,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 </body>
 </html>
 <?php
-include '../../config/db_connect.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $name = $_POST['permission_name'];
   $pdo->prepare("INSERT INTO permissions (permission_name) VALUES (?)")->execute([$name]);
