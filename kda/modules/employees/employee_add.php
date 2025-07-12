@@ -1,152 +1,148 @@
 <?php
-include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+session_start();
+include("../../config/db_connect.php");
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
+}
+
+$branch_stmt = $pdo->query("SELECT id, branch_name FROM branches");
+$branches = $branch_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if (isset($_POST['submit'])) {
+    // Process data here...
+}
+
 ?>
-<!DOCTYPE html>
-<html>
-<head><title>Add Employee</title></head>
-<body>
-<h2>Add Employee</h2>
-</body>
-</html>
-<?php
-include '../../config/db_connect.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Auto Employee Code
-$stmt = $pdo->query("SELECT MAX(id) AS last_id FROM employees");
-$row = $stmt->fetch();
-$next_id = $row['last_id'] + 1;
-$employee_code = "EMP" . str_pad($next_id, 5, "0", STR_PAD_LEFT);
-
-// Random Branch Code
-$branch_code = rand(100000, 999999);
-?>
-
-</div>
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Employee Application Form</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Add Employee | KDA Microfinance</title>
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+        .card {
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+        }
+        .card-header {
+            background: #0066cc;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
-<div class="card shadow p-4 mb-4">
-  <h4 class="mb-3">📝 Employee Application</h4>
+<div class="container py-4">
+    <div class="card mx-auto" style="max-width: 950px;">
+        <div class="card-header text-center">
+            📑 নতুন এমপ্লয়ি যোগ করুন
+        </div>
+        <div class="card-body">
 
-  <form method="POST" enctype="multipart/form-data">
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label>Employee Code</label>
-        <input type="text" name="employee_code" readonly value="<?php echo $employee_code; ?>" class="form-control">
-      </div>
-      <div class="col-md-4">
-        <label>Branch Code</label>
-        <input type="text" name="branch_code" readonly value="<?php echo $branch_code; ?>" class="form-control">
-      </div>
-      <div class="col-md-4">
-        <label>Employee Name</label>
-        <input type="text" name="name" required class="form-control">
-      </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <!-- Personal Information -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">নাম</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">মোবাইল</label>
+                        <input type="text" name="mobile" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">ইমেইল</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">ব্রাঞ্চ</label>
+                        <select name="branch_id" class="form-select" required>
+                            <option value="">-- ব্রাঞ্চ সিলেক্ট করুন --</option>
+                            <?php foreach ($branches as $branch) : ?>
+                                <option value="<?= $branch['id'] ?>"><?= $branch['branch_name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">ডিজিগনেশন</label>
+                        <input type="text" name="designation" class="form-control" required>
+                    </div>
+
+                    <!-- CTC Breakup -->
+                    <h5 class="mt-4 mb-3">💰 CTC Breakup</h5>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">মাসিক CTC</label>
+                        <input type="number" name="ctc" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Dev Fee %</label>
+                        <input type="number" name="company_dev_fee" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">PTAX</label>
+                        <input type="number" name="ptax" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">TDS</label>
+                        <input type="number" name="tds" class="form-control" required>
+                    </div>
+
+                    <!-- Document Upload -->
+                    <h5 class="mt-4 mb-3">📄 ডকুমেন্ট আপলোড</h5>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">পাসপোর্ট সাইজ ছবি</label>
+                        <input type="file" name="photo" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">আধার কার্ড</label>
+                        <input type="file" name="aadhaar" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">প্যান কার্ড</label>
+                        <input type="file" name="pan" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">যোগ্যতার সার্টিফিকেট</label>
+                        <input type="file" name="qualification" class="form-control" required>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 mt-3">
+                        <button type="submit" name="submit" class="btn btn-success">✅ এমপ্লয়ি যোগ করুন</button>
+                        <a href="employee_list.php" class="btn btn-secondary">🔙 তালিকা</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
     </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label>Father's Name</label>
-        <input type="text" name="father_name" class="form-control">
-      </div>
-      <div class="col-md-3">
-        <label>Date of Birth</label>
-        <input type="date" name="dob" class="form-control">
-      </div>
-      <div class="col-md-3">
-        <label>Gender</label>
-        <select name="gender" class="form-select">
-          <option value="">--Select--</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-    </div>
-<div class="row mb-3">
-  <div class="col-md-6">
-    <label>Present Address</label>
-    <textarea name="present_address" class="form-control" rows="2"></textarea>
-  </div>
-  <div class="col-md-6">
-    <label>Permanent Address</label>
-    <textarea name="permanent_address" class="form-control" rows="2"></textarea>
-  </div>
 </div>
 
-<div class="row mb-3">
-  <div class="col-md-6">
-    <label>Qualification</label>
-    <input type="text" name="qualification" class="form-control">
-  </div>
-  <div class="col-md-6">
-    
-    <label>Designation</label>
-    <select name="designation" class="form-select" required>
-      <option value="">-- Select Designation --</option>
-      <?php foreach($designations as $d): ?>
-        <option value="<?php echo $d; ?>"><?php echo $d; ?></option>
-      <?php endforeach ?>
-    </select>
-  </div>
-</div>
-
-<div class="mb-3">
-  <label>Joining Date</label>
-  <input type="date" name="joining_date" class="form-control">
-</div>
-<div class="row mb-3">
-  <div class="col-md-3">
-    <label>Upload Passport Photo</label>
-    <input type="file" name="photo" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Upload Aadhaar Card</label>
-    <input type="file" name="aadhaar_doc" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Upload PAN Card</label>
-    <input type="file" name="pan_doc" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Upload Qualification Certificate</label>
-    <input type="file" name="qualification_doc" class="form-control">
-  </div>
-</div>
-<div class="row mb-3">
-  <div class="col-md-3">
-    <label>Bank Pass Book</label>
-    <input type="file" name="bank_pass_book" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Voter Card</label>
-    <input type="file" name="voter_card" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Application Form</label>
-    <input type="file" name="application_form" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label>Confirmation Letter</label>
-    <input type="file" name="confirmation_letter" class="form-control">
-  </div>
-</div>
-
-<div class="d-flex gap-2">
-  <button type="submit" class="btn btn-primary">➕ Submit Employee</button>
-  <a href="employee_list.php" class="btn btn-secondary">← Back</a>
-</div>
-</form>
-</div>
-</div>
-
+<script src="../../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

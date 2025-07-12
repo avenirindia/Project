@@ -1,12 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/modules/common/rent_due_check.php');
 
-session_start();
 include('../../config/db.php');
 include('../../modules/common/rent_due_check.php');
 ?>
 <?php
-session_start();
 include('../../config/db.php');
 
 // Rent Notification Check
@@ -47,7 +45,7 @@ $company = mysqli_fetch_assoc($company_result);
     🌐 Website: <?php echo $company['website']; ?>
 </div>
 <?php
-session_start();
+
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
 // Total Branches
@@ -125,6 +123,7 @@ $important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!
             <a href="dashboard.php">📊 Dashboard</a>
             <a href="../employees/employee_list.php">👥 Employees</a>
             <a href="../branches/branch_list.php">🏢 Branches</a>
+            <a href="company_info_edit.php">⚙️ Company Info Settings</a>
             <a href="../../logout.php">🚪 Logout</a>
         </div>
 
@@ -171,12 +170,7 @@ $important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!
 </body>
 </html>
 <div class="col-md-2 sidebar">
-    <h4>KDA ERP</h4>
-    <a href="dashboard.php">📊 Dashboard</a>
-    <a href="../employees/employee_list.php">👥 Employees</a>
-    <a href="../branches/branch_list.php">🏢 Branches</a>
-    <a href="company_info_edit.php">⚙️ Company Info Settings</a>
-    <a href="../../logout.php">🚪 Logout</a>
+
 </div>
 <div class="container-fluid">
   <div class="row">
@@ -190,7 +184,7 @@ $important_notice = $notice_data['message'] ?? 'Welcome to KDA Microfinance ERP!
 </div>
 <?php
 // যেকোনো পেজের শুরুর দিকে session & db config include হবে
-session_start();
+
 include('../../config/db.php');
 
 // Notification Fetch
@@ -209,13 +203,9 @@ while ($row = mysqli_fetch_assoc($notis)) {
 }
 ?>
 <?php
-session_start();
+
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/modules/common/rent_due_check.php');
 ?>
 
-<!-- এখানে তোমার dashboard html content থাকবে -->
-<div class="container">
-  <h2>Welcome to KDA Microfinance ERP</h2>
-  <p>...</p>
-</div>
+

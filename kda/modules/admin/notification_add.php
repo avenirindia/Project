@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 ?>
 <?php
-session_start();
+
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
 // Handle form submit
