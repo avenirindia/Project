@@ -1,5 +1,6 @@
 <?php
-include('../../config/db_connect.php');
+include('../../config/constants.php');
+include(BASE_PATH . '/config/db_connect.php');
 
 if(!isset($_POST['designation_id'])){
   die("Designation ID missing.");
