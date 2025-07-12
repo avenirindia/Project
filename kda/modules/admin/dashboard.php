@@ -1,4 +1,6 @@
 <?php
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+
 $company_result = mysqli_query($conn, "SELECT * FROM company_info LIMIT 1");
 $company = mysqli_fetch_assoc($company_result);
 ?>
