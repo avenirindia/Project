@@ -100,3 +100,29 @@ if (!$branch) {
 
 </body>
 </html>
+<div class="text-end mt-4">
+  <a href="branch_edit.php?id=<?php echo $branch['id']; ?>" class="btn btn-primary me-2">✏️ Edit</a>
+
+  <a href="branch_delete.php?id=<?php echo $branch['id']; ?>" class="btn btn-danger me-2"
+     onclick="return confirm('Are you sure you want to delete this branch? This action cannot be undone.');">
+     🗑️ Delete
+  </a>
+
+  <a href="branch_pdf.php?id=<?php echo $branch['id']; ?>" class="btn btn-success">
+    📄 Download PDF
+  </a>
+</div>
+    <div class="text-end mt-4">
+      <a href="branch_edit.php?id=<?php echo $branch['id']; ?>" class="btn btn-primary me-2">✏️ Edit</a>
+
+      <a href="branch_delete.php?id=<?php echo $branch['id']; ?>" class="btn btn-danger me-2"
+         onclick="return confirm('Are you sure you want to delete this branch? This action cannot be undone.');">
+         🗑️ Delete
+      </a>
+
+      <a href="branch_pdf.php?id=<?php echo $branch['id']; ?>" class="btn btn-success">
+        📄 Download PDF
+      </a>
+
+      <a href="branch_list.php" class="btn btn-secondary ms-2">⬅️ Back to List</a>
+    </div>
