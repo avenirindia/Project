@@ -54,3 +54,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   exit;
 }
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Branch</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h4 class="mb-4">🏢 Add New Branch</h4>
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label>Branch Name</label>
+        <input type="text" name="branch_name" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Address</label>
+        <textarea name="address" class="form-control"></textarea>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label>Police Station</label>
+          <input type="text" name="ps" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label>District</label>
+          <input type="text" name="district" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label>State</label>
+          <input type="text" name="state" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label>Pin Code</label>
+          <input type="text" name="pin_code" class="form-control">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Location (Geo Tag)</label>
+        <input type="text" name="location" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Opening Date</label>
+        <input type="date" name="opening_date" class="form-control">
+      </div>
+
+      <!-- Landlord Details, Rent, Docs Upload — সব এখুনি দেব -->
+
+      <button type="submit" class="btn btn-primary">➕ Add Branch</button>
+    </form>
+
+  </div>
+</div>
+
+</body>
+</html>
