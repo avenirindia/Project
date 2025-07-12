@@ -1,23 +1,32 @@
 <?php
 session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
-include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/functions.php');
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $designation_name = trim($_POST['designation_name']);
+
+    if (empty($designation_name)) {
+        die("<div class='alert alert-danger m-3'>Designation Name is required.</div>");
+    }
+
+    // Use Prepared Statement
+    $stmt = $conn->prepare("INSERT INTO designations (designation_name) VALUES (?)");
+    $stmt->bind_param("s", $designation_name);
+
+    if ($stmt->execute()) {
+        header("Location: role_list.php");
+        exit();
+    } else {
+        echo "<div class='alert alert-danger m-3'>Error: " . $conn->error . "</div>";
+    }
+
+    $stmt->close();
+} else {
+    echo "<div class='alert alert-warning m-3'>Invalid Request.</div>";
+}
 ?>
-
-<div class="list-group">
-    <a href="dashboard.php" class="list-group-item">🏠 Dashboard</a>
-
-    <?php if (hasPermission($_SESSION['designation_id'], 'Employee Add', $conn)) { ?>
-        <a href="../employees/emp_add.php" class="list-group-item">👨‍💼 Add Employee</a>
-    <?php } ?>
-
-    <?php if (hasPermission($_SESSION['designation_id'], 'Branch Add', $conn)) { ?>
-        <a href="../branches/branch_add.php" class="list-group-item">🏢 Add Branch</a>
-    <?php } ?>
-
-    <?php if (hasPermission($_SESSION['designation_id'], 'Accounts Access', $conn)) { ?>
-        <a href="../accounts/index.php" class="list-group-item">💳 Accounts</a>
-    <?php } ?>
-
-    <a href="../../logout.php" class="list-group-item text-danger">🚪 Logout</a>
-</div>
