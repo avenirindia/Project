@@ -1,5 +1,9 @@
 <?php
-include('../../../config/db_connect.php');
+include('../../config/db_connect.php');  // ✅ একদম ঠিক path
+
+if(!isset($_POST['designation_id'])){
+  die("Designation ID missing.");
+}
 
 $designation_id = $_POST['designation_id'];
 $permissions = isset($_POST['permissions']) ? $_POST['permissions'] : [];
@@ -12,5 +16,7 @@ foreach($permissions as $p) {
   mysqli_query($conn, "INSERT INTO role_permissions (designation_id, permission_id) VALUES ('$designation_id', '$p')");
 }
 
+// Redirect back with message
 header("Location: role_list.php?msg=Permissions updated successfully");
+exit;
 ?>
