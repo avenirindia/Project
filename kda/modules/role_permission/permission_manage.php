@@ -1,7 +1,10 @@
 <?php
-include('../../config/db.php');
-include('../../includes/header.php');
+include('../../../config/db.php');
+include('../../../includes/header.php');
 
+if(!isset($_GET['id'])){
+  die("No Designation ID provided.");
+}
 $designation_id = $_GET['id'];
 
 // get all permissions
@@ -39,4 +42,4 @@ while($row = mysqli_fetch_assoc($assigned_permissions)) {
   </form>
 </div>
 
-<?php include('../../includes/footer.php'); ?>
+<?php include('../../../includes/footer.php'); ?>
