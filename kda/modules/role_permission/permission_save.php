@@ -1,5 +1,5 @@
 <?php
-include('../../config/db_connect.php');  // ✅ একদম ঠিক path
+include('../../config/db_connect.php');
 
 if(!isset($_POST['designation_id'])){
   die("Designation ID missing.");
@@ -8,15 +8,12 @@ if(!isset($_POST['designation_id'])){
 $designation_id = $_POST['designation_id'];
 $permissions = isset($_POST['permissions']) ? $_POST['permissions'] : [];
 
-// পুরনো permission ডিলিট
 mysqli_query($conn, "DELETE FROM role_permissions WHERE designation_id='$designation_id'");
 
-// নতুন permission ইনসার্ট
 foreach($permissions as $p) {
   mysqli_query($conn, "INSERT INTO role_permissions (designation_id, permission_id) VALUES ('$designation_id', '$p')");
 }
 
-// Redirect back with message
 header("Location: role_list.php?msg=Permissions updated successfully");
 exit;
 ?>
