@@ -2,6 +2,28 @@
 session_start();
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
+if (!isset($_GET['id'])) {
+    echo "<div class='alert alert-danger m-3'>Permission ID missing!</div>";
+    exit();
+}
+
+$id = $_GET['id'];
+
+// Query চালানো
+$result = mysqli_query($conn, "SELECT * FROM permissions WHERE id=$id");
+$permission = mysqli_fetch_assoc($result);
+
+if (!$permission) {
+    echo "<div class='alert alert-danger m-3'>Permission not found!</div>";
+    exit();
+}
+
+// তারপর তোমার ফর্ম ইত্যাদি কোড…
+?>
+
+session_start();
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+
 $id = $_GET['id'];
 $result = mysqli_query($conn, "SELECT * FROM permissions WHERE id=$id");
 $row = mysqli_fetch_assoc($result);

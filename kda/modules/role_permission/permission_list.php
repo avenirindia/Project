@@ -31,8 +31,8 @@ $result = mysqli_query($conn, "SELECT * FROM permissions");
         <td><?= $row['id'] ?></td>
         <td><?= $row['permission_name'] ?></td>
         <td>
-          <a href="permission_edit.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm">✏️ Edit</a>
-          <a href="permission_delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this permission?');" class="btn btn-danger btn-sm">🗑️ Delete</a>
+          <a href="permission_edit.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">✏️ Edit</a>
+          <a href="permission_delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Are you sure?');" class="btn btn-danger btn-sm">🗑️ Delete</a>
         </td>
       </tr>
     <?php } ?>
