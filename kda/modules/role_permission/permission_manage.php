@@ -1,5 +1,5 @@
 <?php
-include('../../config/constants.php');   // এড করব প্রথম লাইনে
+include('../../config/constants.php');
 include(BASE_PATH . '/config/db_connect.php');
 include(BASE_PATH . '/includes/header.php');
 
