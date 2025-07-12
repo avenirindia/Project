@@ -13,4 +13,3 @@ mysqli_query($conn, "INSERT INTO designations (designation_name) VALUES ('$desig
 header("Location: role_list.php?msg=Designation added successfully");
 exit;
 ?>
-<?php include 'admin_footer.php'; ?>
