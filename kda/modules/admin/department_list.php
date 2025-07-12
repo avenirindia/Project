@@ -1,4 +1,11 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../login.php");
+    exit();
+}
+?>
+<?php
 include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
 
 $result = mysqli_query($conn, "SELECT * FROM departments ORDER BY id ASC");

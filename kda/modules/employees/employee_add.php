@@ -1,4 +1,14 @@
 <?php
+include($_SERVER['DOCUMENT_ROOT'].'/Project/kda/config/db.php');
+?>
+<!DOCTYPE html>
+<html>
+<head><title>Add Employee</title></head>
+<body>
+<h2>Add Employee</h2>
+</body>
+</html>
+<?php
 include '../../config/db_connect.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

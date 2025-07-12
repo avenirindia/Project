@@ -59,3 +59,9 @@ $user_designation_id = $_SESSION['designation_id'];
     &copy; 2025 KDA Microfinance ERP
   </div>
 </div>
+<li class="nav-item">
+  <a class="nav-link" href="../role_permission/permission_list.php">🛡️ Manage Permissions</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../role_permission/role_list.php">👥 Manage Roles</a>
+</li>
